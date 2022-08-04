@@ -1,4 +1,4 @@
-function [ac, lags] = acf(y,max_lag, make_plot)
+function [ac, lags] = check_acf(y,max_lag, make_plot)
 % Compute the autocorrelation function (for 0-max_lag lags).
 %
 % Inputs:
@@ -23,7 +23,7 @@ function [ac, lags] = acf(y,max_lag, make_plot)
 %
 % Example:
 % rng(1)
-% acf(randn(100,1), 10)
+% check_acf(randn(100,1), 10)
 % Returns: [1.0000; -0.1003; -0.0657; 0.0845; 0.0706; 0.0552; -0.2212; -0.0576; 0.2531; -0.0730; -0.0271]
 %
 
