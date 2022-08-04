@@ -12,7 +12,8 @@ function     s=ocdr(p,A,fs,fc,plim)
 %     or
 %     s=ocdr(p,A,fs,fc,plim)    % p and A are vectors/matrices
 %
-%     Estimate the forward speed of a flying or diving animal by first computing
+%     NOTE: this is an alias for speed_from_depth().
+%   Estimate the forward speed of a flying or diving animal by first computing
 %		the altitude or depth-rate (i.e., the first differential of the pressure 
 %		in meters) and then correcting for the pitch angle. This is called the 
 %		Orientation Corrected Depth Rate. There are two major assumptions in this 
@@ -57,48 +58,4 @@ function     s=ocdr(p,A,fs,fc,plim)
 %     Last modified: 3 Feb 2021 - fixed sign error that was returning
 %     negative speeds.
 
-s = [] ;
-if nargin<2,
-   help('ocdr') ;
-   return
-end
-
-if isstruct(p) && isstruct(A),
-	if nargin<3,
-		fs = [] ;
-   end
-	if nargin<4,
-		fc = [] ;
-   end
-   plim = fc ;
-	fc = fs ;
-   [A,p,fs] = sens2var(A,p);
-else
-   if nargin<3,
-      fprintf('ocdr: fs required for vector/matrix sensor data\n');
-      return
-   end
-	if nargin<4,
-		fc = [] ;
-   end
-	if nargin<5,
-		plim = [] ;
-   end
-end
-
-if isempty(fc),
-	fc = 0.2 ;						% default filter cut-off of 0.2 Hz
-end
-
-if isempty(plim),
-	plim = 20/180*pi ;			% default 20 degree pitch angle cut-off
-end
-
-nf = round(4*fs/fc) ;
-% use central differences to avoid a half sample delay
-diffp = [p(2)-p(1);(p(3:end)-p(1:end-2))/2;p(end)-p(end-1)]*fs ;
-v = fir_nodelay(diffp,nf,fc/(fs/2)) ;
-A = fir_nodelay(A,nf,fc/(fs/2)) ;
-pitch = a2pr(A) ;
-pitch(abs(pitch)<plim) = NaN ;
-s = -v./sin(pitch) ;    % mj added -ve sign here 3/2/21
+[s,~] = speed_from_depth(p,A,fs,fc,plim)

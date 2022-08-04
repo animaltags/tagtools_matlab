@@ -57,6 +57,7 @@ function     [s,v]=speed_from_depth(p,A,fs,fc,plim)
 %     markjohnson@st-andrews.ac.uk
 %     Last modified: 15 May 2017
 
+s = [] ;
 if nargin<2
    help('speed_from_depth') ;
    return
@@ -64,16 +65,14 @@ end
 
 if isstruct(p) && isstruct(A)
 	if nargin<3
-        fs = [];
-    end
+      fs = [];
+  end
 	if nargin<4
-		fc = [] ;
-    end
-    plim = fc ;
+		  fc = [] ;
+  end
+  plim = fc ;
 	fc = fs ;
-	fs = p.sampling_rate ;
-	p = p.data ;
-    A = A.data ;
+	[A,p,fs] = sens2var(A,p);
 else
    if nargin<3
       fprintf('speed_from_depth: fs required for vector/matrix sensor data\n');
@@ -107,13 +106,15 @@ if nargin<5 || isempty(plim)
 end
 
 nf = round(4*fs/fc) ;
-v = fir_nodelay([p(2)-p(1);diff(p)]*fs,nf,fc/(fs/2)) ;
+% use central differences to avoid a half sample delay
+diffp = [p(2)-p(1);(p(3:end)-p(1:end-2))/2;p(end)-p(end-1)]*fs ;
+v = fir_nodelay(diffp,nf,fc/(fs/2)) ;
 
 if ~isempty(A)
 	A = fir_nodelay(A,nf,fc/(fs/2)) ;
 	pitch = a2pr(A) ;
 	pitch(abs(pitch)<plim) = NaN ;
-	s = v./sin(pitch) ;
+	s = -v./sin(pitch) ; % mj added -ve sign here 3/2/21
 else
 	s = v;
 end

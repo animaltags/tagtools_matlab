@@ -79,7 +79,7 @@ if isempty(baselineEnd)
 end
 
 if isempty(BL_COV)
-    BL_COV = false;
+    BL_COV = FALSE;
 end
 
 % preliminaries - conversion, preallocate space, etc.
@@ -160,8 +160,7 @@ end
 
 %----------------------------------------------------------------------------------
 function D = Ma(d, Sx)
-% Calculate distances!
-% Alternate way of calc m_dist
+% Calculate Mahalanobis distances!
 %
 % Inputs:
 %   d: a row vector of pairwise differences between the things you're comparing
