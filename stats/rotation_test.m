@@ -44,19 +44,14 @@ function result = rotation_test(event_times, full_period, exp_period, n_rot, ts_
 %           rotated datasets is also returned.
 %
 % References: 
-%   Miller, P. J. O., Shapiro, A. D., Tyack, P. L. and Solow, A. R. (2004). Call-type matching in vocal exchanges of free-ranging resident killer whales, Orcinus orca. Anim. Behav. 67, 1099–1107.
-%   DeRuiter, S. L. and Solow, A. R. (2008). A rotation test for behavioural point-process data. Anim. Behav. 76, 1103–1452.
+%   Miller, P. J. O., Shapiro, A. D., Tyack, P. L. and Solow, A. R. (2004). Call-type matching in vocal exchanges of free-ranging resident killer whales, Orcinus orca. Anim. Behav. 67, 1099?1107.
+%   DeRuiter, S. L. and Solow, A. R. (2008). A rotation test for behavioural point-process data. Anim. Behav. 76, 1103?1452.
 %
 % Note: Advanced users seeking more flexibility may want to use the underlying 
-%   function rotate to carry out customized rotation resampling. rotate generates one 
+%   function rotate_data() to carry out customized rotation resampling. rotate_data() generates one 
 %   rotated dataset from event_times and exp_period.
 % 
 % Output sampling rate is the same as the input sampling rate.
-% Frame: This function assumes a [north,east,up] navigation frame and a [forward,right,up] local frame. 
-%   In these frames, a positive pitch angle is an anti-clockwise rotation around the y-axis. A positive roll angle is a clockwise rotation around the x-axis. 
-%   A descending animal will have a negative pitch angle while an animal rolled with its right side up will have a positive roll angle.
-% This function output can be quite sensitive to the inputs used, namely those that define the relative weight given to the existing data, 
-%   in particular regarding (x,y)=(lat,long); increasing q3p, the (x,y) state variance, will increase the weight given to independent observations of (x,y), say from GPS readings.
 %
 % Example:
 % r = rotation_test((20*rand(500,1)), [], [10,200], [],'mean', [], [], true);
@@ -135,7 +130,7 @@ end
 %find TS for n_rot rotations
 rot_stats = zeros(1,n_rot);
 for b = 1:n_rot
-    rot_events = rotate(event_times, full_period);
+    rot_events = rotate_data(event_times, full_period);
     rot_e_dat = get_e_data(rot_events,exp_period) ;
     if ~isempty(varargin)
         rot_stats(b) = func(rot_e_dat, varargin{1:end});

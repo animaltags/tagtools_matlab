@@ -1,4 +1,4 @@
-function rot_event_times = rotate(event_times, full_period)
+function rot_event_times = rotate_data(event_times, full_period)
 % Rotate data.
 % 
 % Rotate a numeric vector (for rotation_test, this will be a set of event 
@@ -38,7 +38,7 @@ function rot_event_times = rotate(event_times, full_period)
 %Input checking
 %============================================================================
 if nargin < 2
-    help rotate
+    help rotate_data
 end
 
 if sum(isnan(full_period)) > 0
