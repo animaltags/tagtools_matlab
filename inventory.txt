@@ -2,6 +2,8 @@ calibration
  auto_cal_acc
  auto_cal_mag
  check_AM
+ closest
+ copy_cal
  crop
  crop_all
  crop_to
@@ -112,6 +114,7 @@ tagiofuns
  add_nc
  change_fnames
  csv2struct
+ datevec2unix
  get_d3_cuetab
  get_researcher
  get_species
@@ -132,6 +135,7 @@ tagiofuns
  sens2var
  sound_archive
  strip_quotes
+ unix2datevec
 
 testdata
  make_test_set1
