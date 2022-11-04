@@ -69,6 +69,7 @@ function    [T,pe] = htrack(A,M,s,fs,fc)
 %    markjohnson@st-andrews.ac.uk
 %    Last modified: 3 March 2018 - added interpolation over NaN input values
 %              - fixed bug when inputs are sensor structures   
+%              17 October 2022 - fixed bug at line 110
 
 T = [] ; pe = [] ;
 if nargin<3,
@@ -106,10 +107,11 @@ end
 nf = 4*fs/fc ;
 hd = m2h(M,A,fs,fc);
 if length(s)==1,
-	s = repmat(s/fs,size(hd,1),2) ;
+   s = repmat(s/fs,size(hd,1),2) ;
+   ks = [] ;
 else
    [s,ks] = interpnan(s) ;
-	s = repmat(s/fs,1,2) ;
+   s = repmat(s/fs,1,2) ;
 end
 	
 T = cumsum(s.*[cos(hd) sin(hd)]) ;
