@@ -155,7 +155,7 @@ plot_fig1(P,fs,PRH) ;
 
 while 1,                % user input to adjust results
    [gx,gy,butt] = ginput(1) ;
-	k = nearest(PRH(:,1),gx) ;
+	k = closest(PRH(:,1),gx) ;
 	if butt==1,
       fprintf(' %d: %3.1f degrees\n',round(gx),gy) ;
    else

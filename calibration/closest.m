@@ -19,7 +19,7 @@ function    [kx,mind] = closest(X,Y,maxdist,direction)
 kx = [] ; mind = [] ;
 
 if nargin<2,
-   help nearest
+   help closest
    return
 elseif nargin<3,
    maxdist = NaN ;

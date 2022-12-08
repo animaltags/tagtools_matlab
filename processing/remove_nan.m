@@ -31,7 +31,7 @@ for k=1:size(X,2),
    kn = find(v) ;
    kg = unique([max(kn-1,1);min(kn+1,size(X,1))]) ;
    kg = kg(~ismember(kg,kn)) ;
-   kk = nearest(kg,kn) ;
+   kk = closestkg,kn) ;
    X(kn,k) = X(kg(kk),k) ;
 end
 
