@@ -55,9 +55,11 @@ function Y = dive_stats(P, dive_cues, X, fs, prop, angular, X_name)
 % to_st  The start time of the to phase
 % to_et  The end time of the to phase
 % to_dur  The duration in seconds of to phase
+% to_rate The average speed during the to phase ((final depth - initial depth) / duration)
 % from_st The start time of the from phase
 % from_et The end time of the from phase
 % from_dur The duration in seconds of from phase
+% from_rate The average speed during the from phase ((final depth - initial depth) / duration)
 % mean_angle If angular=1 and X is input, the mean angle for the entire excursion. Values for each phase are also provided in columns mean_to_angle, mean_dest_angle, and mean_from_angle.
 % angle_var If angular=1 and X is input, the angular variance for the entire excursion. Values for each phase are also provided individually in columns to_angle_var, dest_angle_var, and from_angle_var.
 % mean_aux If angular=0 and X is input, the mean value of X for the entire excursion. Values for each phase are also provided in columns mean_to_aux, mean_dest_aux, and mean_from_aux.
