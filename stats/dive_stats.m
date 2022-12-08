@@ -171,8 +171,8 @@ for d = 1:size(dive_cues,1) %loop over dives
   z = p((di(d,1):di(d,2))) ;
   maxz(d) = nanmax(z);
   zz = find(z > (prop * max(z))) ;
-  S = max(zz) ;
-  L = min(zz) ;
+  S = min(zz) ;
+  L = max(zz) ;
   dur(d) = dive_cues(d,2) - dive_cues(d,1);
   dest_st(d) = S/fs;
   dest_et(d) = L/fs;
@@ -214,8 +214,8 @@ for d = 1:size(dive_cues,1) %loop over dives
 end %end loop over dives
   %change output column names if needed
   Y = struct('dur', dur, 'maxz', maxz, 'dest_st', dest_st, 'dest_et', ...
-      dest_et, 'dest_dur', dest_dur, 'from_dur', from_dur, 'from_rate', ...
-      from_rate, 'to_rate', to_rate);
+      dest_et, 'dest_dur', dest_dur, 'from_dur', from_dur, 'to_dur', to_dur, ...
+      'from_rate', from_rate, 'to_rate', to_rate);
   if angular ~= 1 && ~isempty(x)
   Y.(['mean_' X_name]) = mean_aux;
   Y.(['mean_to_' X_name]) = mean_to_aux;
