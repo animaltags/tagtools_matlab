@@ -1,4 +1,4 @@
-function    e = odba(A,fs,fh)
+function    e = odba(A,n,method)
 
 %       e = odba(A,fh)              % A is a sensor structure
 %		  or
@@ -41,20 +41,24 @@ function    e = odba(A,fs,fh)
 %       e is a column vector of ODBA with the same number of rows as A. e has the same
 %		   units as A.
 %
-%		  Example:
-%		   odba([1,-0.5,0.1;0.8,-0.2,0.6;0.5,-0.9,-0.7],5,'vedba')
-%		   returns: [0.68475;0.93393;0.83600;0.65744]
+%	Examples:
+%		   odba([1,-0.5,0.1;0.8,-0.2,0.6;0.5,-0.9,-0.7;0.6,-0.2,0.8],5,'vedba')
+%		   returns: [0.1536;0.4944;1.1534;0.3682]
 %
-%	     See Wilson et al. 2006 Moving towards acceleration for estimates of activity 
+%		   odba([1,-0.5,0.1;0.8,-0.2,0.6;0.5,-0.9,-0.7;0.6,-0.2,0.8],5,'wilson')
+%		   returns: [0.22;0.7;1.72;0.5]
+%
+%	See Wilson et al. 2006 Moving towards acceleration for estimates of activity 
 %       specific metabolic rate in free living animals: the case of the cormorant.
-%		  J. Animal Ecology 75:1081-1090. https://doi.org/10.1111/j.1365-2656.2006.01127.x
+%	J. Animal Ecology 75:1081-1090. https://doi.org/10.1111/j.1365-2656.2006.01127.x
 %
-%		  Delay-free filtering is used for all filter types.
+%	Delay-free filtering is used for all filter types.
 %
 %       Valid: Matlab, Octave
 %       markjohnson@st-andrews.ac.uk
 %       Last modified: 5 May 2017
 %		  19 May 2020: embarrassing error corrected in the Wilson and VeDBA filter calculation
+%		  28 Jan 2023: another embarrassing error corrected in the input parameters
 
 e = [] ;
 if nargin<2,
@@ -64,32 +68,40 @@ end
 
 if isstruct(A),
    if nargin==2,
-      fh = fs ;
-      [A,fs]=sens2var(A,'regular') ;
-   else
-      n = fs;
-      [A,fs]=sens2var(A,'regular') ;
-      fs = n;
+      method = n ;	%  for call type: e = odba(A,fh), method will be used as fh
    end
+   [A,fs]=sens2var(A,'regular') ;
    if isempty(A), return, end
-elseif nargin<3,
-   help odba
-   return
+else
+   if nargin<3,
+   	help odba
+   	return
+   end
+   fs = n ;		%  for call type: e = odba(A,fs,fh) 
 end
 
-if ischar(fh),				% 'wilson' or 'vedba' method is selected
-	n = 2*floor(fs/2)+1 ; 	% make sure n is odd
+if ischar(method),				% 'wilson' or 'vedba' method is selected
+	n = 2*floor(n/2)+1 ; 	% make sure n is odd
 	nz = floor(n/2) ;
 	h = [zeros(nz,1);1;zeros(nz,1)]-ones(n,1)/n ;
-	Ah = filter(h,1,[zeros(nz,size(A,2));A;zeros(nz,size(A,2))]) ;
+	%Ah = filter(h,1,[zeros(nz,size(A,2));A;zeros(nz,size(A,2))]) ;  % was this
+	Ah = filter(h,1,[repmat(A(1,:),nz,1);A;repmat(A(end,:),nz,1)]) ; % more sensible start/end values
 	Ah = Ah(n-1+(1:size(A,1)),:) ;
-	if strcmp(fh,'vedba'),
-		e = sqrt(sum(abs(Ah).^2,2)) ;		% use 2-norm
-	else
-		e = sum(abs(Ah),2) ;	% use 1-norm
+	switch method
+		case 'vedba'
+			e = sqrt(sum(Ah.^2,2)) ;		% vedba: use 2-norm
+		case 'wilson'
+			e = sum(abs(Ah),2) ;			% Wilson method: use 1-norm
+		otherwise
+			fprintf('Unknown method: %s\n',method)
 	end
 else
+	fh = method ;
 	n = 4*round(fs/fh) ;
-   Ah = fir_nodelay(A,n,fh/(fs/2),'high') ;
+	if size(A,1)<=n/2,
+		fprintf('A needs at least %d rows to compute filter\n',floor(n/2)+1);
+		return
+	end
+   	Ah = fir_nodelay(A,n,fh/(fs/2),'high') ;
 	e = sqrt(sum(abs(Ah).^2,2)) ;
 end
