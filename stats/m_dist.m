@@ -1,4 +1,4 @@
-function D = m_dist(data,fs, smoothDur, overlap, consec, cumSum, expStart, expEnd, baselineStart, baselineEnd, BL_COV)
+function  D = m_dist(data,fs, smoothDur, overlap, consec, cumSum, expStart, expEnd, baselineStart, baselineEnd, BL_COV)
 % Calculate Mahalanobis distance for a multivariate time series.
 %
 % Inputs: 
@@ -94,13 +94,13 @@ k = (1:N)';                                        %index vector
 ss = (k-1)*(W-O) + 1;                              %start times of comparison windows, in samples
 ps = ((k-1)*(W-O) + 1) + smoothDur.*fs.*60/2;      %mid points of comparison windows, in samples (times at which distances will be reported)
 t = ps/fs;                                         %mid-point times in seconds
-ctr = mean(data(bs:be,:), 1);                      %mean values during baseline period
+ctr = mean(data(bs:be,:), 1, 'omitnan');           %mean values during baseline period
 
 if BL_COV
     %covariance matrix using all data in baseline period
     bcov = cov(data(bs:be, :));
 else
-    bcov = cov(data);
+    bcov = cov(data, 'partialrows');
 end
 
 if consec == false
