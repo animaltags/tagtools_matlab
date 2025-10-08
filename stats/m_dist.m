@@ -36,6 +36,12 @@ function  D = m_dist(data,fs, smoothDur, overlap, consec, cumSum, expStart, expE
 %  baselineEnd: End time (in seconds since start of the data set) of the baseline period.  
 %     If not specified, the entire data set will be used (baseline_end will 
 %     be the last sampled time-point in the data set).
+%  BL_COV: Logical. if TRUE, the variance-covariance matrix for Mahalanobis
+%     distance calculation is estimated based on the baseline period only. 
+%     If FALSE, estimate is based on the entire dataset. Default is FALSE. 
+%     If using TRUE, be sure you are confident that the baseline period is 
+%     long enough to provide adequate data for accurate estimation of the 
+%     matrix.
 %       
 % Outputs:
 %  D: Data structure containing results
