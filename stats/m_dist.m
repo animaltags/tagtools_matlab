@@ -20,7 +20,7 @@ function  D = m_dist(data,fs, smoothDur, overlap, consec, cumSum, expStart, expE
 %  consec: Logical. If consec=true, then the calculated distances are between
 %     consecutive windows of duration smoothDur, sliding forward over 
 %     the data set by a time step of (smoothDur-overlap) minutes.  
-%     If TRUE, baselineStart and baselineEnd inputs will be used to define
+%     If FALSE, baselineStart and baselineEnd inputs will be used to define
 %     the period used to calculate the data covariance matrix. Default is consec=false.  
 %  cumSum: Logical.  If cum_sum=true, then output will be the cumulative 
 %     sum of the calculated distances, rather than the distances themselves. 
@@ -47,7 +47,7 @@ function  D = m_dist(data,fs, smoothDur, overlap, consec, cumSum, expStart, expE
 %  D: Data structure containing results
 %     t: Times, in seconds since start of dataset, at which Mahalanobis distances are 
 %        reported. If a smoothDur was applied, then the reported times will be the 
-%        start times of each "comparison" window.
+%        mid points of each "comparison" window.
 %     dist: Mahalanobis distances between the specified baseline period and 
 %        the specified "comparison" periods             
 
@@ -176,7 +176,7 @@ function D = Ma(d, Sx)
 %   D: Data structure containing results
 %     t: Times, in seconds since start of dataset, at which Mahalanobis distances are 
 %        reported. If a smoothDur was applied, then the reported times will be the 
-%        start times of each "comparison" window.
+%        mid points of each "comparison" window.
 %     dist: Mahalanobis distances between the specified baseline period and 
 %        the specified "comparison" periods
 
