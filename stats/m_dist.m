@@ -1,4 +1,4 @@
-function D = m_dist(data,fs, smoothDur, overlap, consec, cumSum, expStart, expEnd, baselineStart, baselineEnd, BL_COV)
+function  D = m_dist(data,fs, smoothDur, overlap, consec, cumSum, expStart, expEnd, baselineStart, baselineEnd, BL_COV)
 % Calculate Mahalanobis distance for a multivariate time series.
 %
 % Inputs: 
@@ -20,7 +20,7 @@ function D = m_dist(data,fs, smoothDur, overlap, consec, cumSum, expStart, expEn
 %  consec: Logical. If consec=true, then the calculated distances are between
 %     consecutive windows of duration smoothDur, sliding forward over 
 %     the data set by a time step of (smoothDur-overlap) minutes.  
-%     If TRUE, baselineStart and baselineEnd inputs will be used to define
+%     If FALSE, baselineStart and baselineEnd inputs will be used to define
 %     the period used to calculate the data covariance matrix. Default is consec=false.  
 %  cumSum: Logical.  If cum_sum=true, then output will be the cumulative 
 %     sum of the calculated distances, rather than the distances themselves. 
@@ -36,12 +36,18 @@ function D = m_dist(data,fs, smoothDur, overlap, consec, cumSum, expStart, expEn
 %  baselineEnd: End time (in seconds since start of the data set) of the baseline period.  
 %     If not specified, the entire data set will be used (baseline_end will 
 %     be the last sampled time-point in the data set).
+%  BL_COV: Logical. if TRUE, the variance-covariance matrix for Mahalanobis
+%     distance calculation is estimated based on the baseline period only. 
+%     If FALSE, estimate is based on the entire dataset. Default is FALSE. 
+%     If using TRUE, be sure you are confident that the baseline period is 
+%     long enough to provide adequate data for accurate estimation of the 
+%     matrix.
 %       
 % Outputs:
 %  D: Data structure containing results
 %     t: Times, in seconds since start of dataset, at which Mahalanobis distances are 
 %        reported. If a smoothDur was applied, then the reported times will be the 
-%        start times of each "comparison" window.
+%        mid points of each "comparison" window.
 %     dist: Mahalanobis distances between the specified baseline period and 
 %        the specified "comparison" periods             
 
@@ -94,13 +100,13 @@ k = (1:N)';                                        %index vector
 ss = (k-1)*(W-O) + 1;                              %start times of comparison windows, in samples
 ps = ((k-1)*(W-O) + 1) + smoothDur.*fs.*60/2;      %mid points of comparison windows, in samples (times at which distances will be reported)
 t = ps/fs;                                         %mid-point times in seconds
-ctr = mean(data(bs:be,:), 1);                      %mean values during baseline period
+ctr = mean(data(bs:be,:), 1, 'omitnan');           %mean values during baseline period
 
 if BL_COV
     %covariance matrix using all data in baseline period
     bcov = cov(data(bs:be, :));
 else
-    bcov = cov(data);
+    bcov = cov(data, 'partialrows');
 end
 
 if consec == false
@@ -170,7 +176,7 @@ function D = Ma(d, Sx)
 %   D: Data structure containing results
 %     t: Times, in seconds since start of dataset, at which Mahalanobis distances are 
 %        reported. If a smoothDur was applied, then the reported times will be the 
-%        start times of each "comparison" window.
+%        mid points of each "comparison" window.
 %     dist: Mahalanobis distances between the specified baseline period and 
 %        the specified "comparison" periods
 
